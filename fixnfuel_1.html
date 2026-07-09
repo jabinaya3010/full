@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FixNFuel - Emergency Fuel & Mechanic Booking</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+:root{
+  --navy:#0f172a;
+  --royal:#1e3a8a;
+  --sky:#38bdf8;
+  --gold:#FFD700;
+  --gold-deep:#facc15;
+  --ink:#e2e8f0;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+h1,h2,h3,.logo h2{
+  font-family:'Sora',sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:var(--navy);
+  color:var(--ink);
+}
+
+/* ---------- shared auth backdrop (login + otp) ---------- */
+.auth-screen{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+  padding:20px;
+
+  background-image:
+    linear-gradient(160deg, rgba(6,12,28,.88) 0%, rgba(15,23,42,.82) 45%, rgba(30,58,138,.72) 100%),
+    url("https://images.pexels.com/photos/2524161/pexels-photo-2524161.jpeg?auto=compress&cs=tinysrgb&w=1920");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+
+.auth-screen::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 20% 20%, rgba(56,189,248,.18), transparent 55%);
+  pointer-events:none;
+}
+
+.icon{
+  position:absolute;
+  font-size:42px;
+  color:rgba(255,255,255,.12);
+  animation:float 12s linear infinite;
+  pointer-events:none;
+}
+
+.icon:nth-child(1){left:8%;animation-delay:0s;}
+.icon:nth-child(2){left:32%;animation-delay:3s;}
+.icon:nth-child(3){left:60%;animation-delay:6s;}
+.icon:nth-child(4){left:85%;animation-delay:9s;}
+
+@keyframes float{
+  0%{transform:translateY(110vh) rotate(0);}
+  100%{transform:translateY(-140px) rotate(360deg);}
+}
+
+.container{
+  position:relative;
+  z-index:1;
+  width:420px;
+  max-width:100%;
+  padding:35px;
+  border-radius:20px;
+  background:rgba(255,255,255,.10);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 20px 50px rgba(0,0,0,.45);
+  color:white;
+  text-align:center;
+}
+
+.logo{
+  width:80px;
+  height:80px;
+  background:var(--gold);
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:auto;
+  font-size:35px;
+  color:black;
+  margin-bottom:15px;
+}
+
+.container h1{
+  font-size:32px;
+  font-weight:700;
+}
+
+.tagline{
+  margin-top:8px;
+  font-size:14px;
+  color:#dbeafe;
+  letter-spacing:.3px;
+}
+
+.description{
+  margin:20px 0;
+  font-size:14px;
+  line-height:24px;
+  color:#f1f5f9;
+}
+
+.input-group{
+  position:relative;
+  margin:20px 0;
+  text-align:left;
+}
+
+.input-group i{
+  position:absolute;
+  top:15px;
+  left:15px;
+  color:#cbd5e1;
+}
+
+.error-msg{
+  display:none;
+  text-align:left;
+  color:#fca5a5;
+  font-size:12.5px;
+  margin-top:-12px;
+  margin-bottom:14px;
+}
+
+input{
+  width:100%;
+  padding:14px 14px 14px 45px;
+  border:none;
+  outline:2px solid transparent;
+  border-radius:10px;
+  background:rgba(255,255,255,.15);
+  color:white;
+  font-size:16px;
+  transition:.2s;
+}
+
+input:focus{
+  outline:2px solid var(--sky);
+  background:rgba(255,255,255,.2);
+}
+
+input::placeholder{
+  color:#dde3ea;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  background:var(--gold);
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.25s;
+  color:#171310;
+}
+
+button:hover{
+  transform:translateY(-3px);
+  background:var(--gold-deep);
+  box-shadow:0 10px 25px rgba(250,204,21,.35);
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.link-btn{
+  background:none;
+  width:auto;
+  padding:0;
+  color:#93c5fd;
+  font-weight:500;
+  font-size:13.5px;
+  text-decoration:underline;
+  margin-top:16px;
+}
+
+.link-btn:hover{
+  transform:none;
+  color:var(--sky);
+  background:none;
+  box-shadow:none;
+}
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:25px;
+}
+
+.feature{
+  padding:10px;
+  border-radius:8px;
+  background:rgba(255,255,255,.10);
+  font-size:12.5px;
+}
+
+.footer{
+  margin-top:20px;
+  font-size:12.5px;
+  color:#cbd5e1;
+}
+
+/* ---------- otp screen ---------- */
+.otp-boxes{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-bottom:18px;
+}
+
+.otp-boxes input{
+  width:52px;
+  padding:14px 0;
+  text-align:center;
+  font-size:20px;
+  letter-spacing:0;
+}
+
+.mobile-line{
+  margin-bottom:18px;
+  color:#dbeafe;
+  font-size:14.5px;
+}
+
+.mobile-line strong{
+  color:white;
+}
+
+.resend{
+  margin-top:16px;
+  font-size:13px;
+  color:#cbd5e1;
+}
+
+.resend button.link-btn{
+  margin-top:0;
+  display:inline;
+}
+
+/* ---------- dashboard ---------- */
+#dashboard-screen{
+  display:none;
+}
+
+header{
+  background:var(--navy);
+  color:#fff;
+  padding:15px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 5px 15px rgba(0,0,0,.15);
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.logo-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo-row i{
+  color:var(--gold);
+  font-size:30px;
+}
+
+.logo-row h2{
+  color:#fff;
+  margin:0;
+  font-size:22px;
+}
+
+.logo-row h2 span{
+  color:var(--gold);
+}
+
+.navbar{
+  display:flex;
+  list-style:none;
+  gap:25px;
+  margin:0;
+  padding:0;
+}
+
+.navbar li a{
+  color:#fff;
+  text-decoration:none;
+  font-size:15px;
+  transition:.3s;
+}
+
+.navbar li a:hover{
+  color:var(--gold);
+}
+
+.logout-btn{
+  background:rgba(255,255,255,.1);
+  color:white;
+  border:1px solid rgba(255,255,255,.25);
+  padding:10px 16px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.25s;
+  width:auto;
+}
+
+.logout-btn:hover{
+  background:#dc2626;
+  border-color:#dc2626;
+  transform:none;
+  box-shadow:none;
+}
+
+@media(max-width:900px){
+  header{
+    flex-direction:column;
+    gap:15px;
+  }
+  .navbar{
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+}
+
+.hero{
+  min-height:420px;
+  background:
+    linear-gradient(rgba(15,23,42,.72), rgba(15,23,42,.72)),
+    url("https://images.pexels.com/photos/2524161/pexels-photo-2524161.jpeg?auto=compress&cs=tinysrgb&w=1920");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  color:white;
+  padding:40px 20px;
+}
+
+.hero-content{
+  max-width:700px;
+}
+
+.hero h1{
+  font-size:44px;
+  margin-bottom:15px;
+  line-height:1.15;
+}
+
+.hero p{
+  font-size:17px;
+  margin-bottom:25px;
+  color:#e2e8f0;
+}
+
+.hero-btn{
+  padding:14px 28px;
+  border:none;
+  border-radius:8px;
+  background:var(--gold);
+  color:var(--navy);
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.25s;
+  width:auto;
+}
+
+.hero-btn:hover{
+  background:var(--gold-deep);
+  transform:translateY(-3px);
+}
+
+.hero-actions{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.hero-actions .hero-btn{
+  width:auto;
+}
+
+.hero-btn-outline{
+  background:transparent;
+  color:white;
+  border:1.5px solid rgba(255,255,255,.6);
+}
+
+.hero-btn-outline:hover{
+  background:rgba(255,255,255,.12);
+  transform:translateY(-3px);
+}
+
+.card{
+  max-width:700px;
+  margin:30px auto;
+  background:#fff;
+  padding:30px;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,.1);
+  color:#0f172a;
+}
+
+.card h3{
+  margin-bottom:20px;
+  color:var(--royal);
+}
+
+.info{
+  margin:12px 0;
+  font-size:15.5px;
+}
+
+.services{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:20px;
+  padding:30px;
+  max-width:1000px;
+  margin:auto;
+}
+
+.service{
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  text-align:center;
+  box-shadow:0 5px 15px rgba(0,0,0,.1);
+  transition:.3s;
+  color:#0f172a;
+}
+
+.service:hover{
+  transform:translateY(-8px);
+}
+
+.service i{
+  font-size:42px;
+  color:var(--royal);
+  margin-bottom:15px;
+}
+
+.service h4{
+  margin-bottom:10px;
+}
+
+.service p{
+  font-size:13.5px;
+  color:#475569;
+  margin-bottom:14px;
+}
+
+.svc-btn{
+  padding:10px 18px;
+  border:none;
+  border-radius:8px;
+  background:var(--royal);
+  color:white;
+  cursor:pointer;
+  width:auto;
+  font-size:14px;
+}
+
+.svc-btn:hover{
+  background:#1d4ed8;
+  transform:none;
+  box-shadow:none;
+}
+
+footer.site-footer{
+  margin-top:40px;
+  background:var(--navy);
+  color:white;
+  text-align:center;
+  padding:18px;
+  font-size:13.5px;
+}
+
+/* ---------- booking modal ---------- */
+.modal-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(6,10,20,.65);
+  backdrop-filter:blur(4px);
+  z-index:100;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.modal-overlay.open{
+  display:flex;
+}
+
+.modal-box{
+  width:440px;
+  max-width:100%;
+  background:#fff;
+  color:#0f172a;
+  border-radius:16px;
+  padding:30px;
+  box-shadow:0 25px 60px rgba(0,0,0,.4);
+  position:relative;
+}
+
+.modal-close{
+  position:absolute;
+  top:16px;
+  right:16px;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:#f1f5f9;
+  color:#0f172a;
+  font-size:14px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.modal-close:hover{
+  background:#e2e8f0;
+  transform:none;
+  box-shadow:none;
+}
+
+.modal-icon{
+  width:52px;
+  height:52px;
+  border-radius:14px;
+  background:#eff6ff;
+  color:var(--royal);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  margin-bottom:14px;
+}
+
+.modal-box h3{
+  color:var(--navy);
+  margin-bottom:6px;
+  font-size:22px;
+}
+
+.modal-sub{
+  color:#64748b;
+  font-size:13.5px;
+  margin-bottom:20px;
+}
+
+.form-field{
+  text-align:left;
+  margin-bottom:16px;
+}
+
+.form-field label{
+  display:block;
+  font-size:12.5px;
+  font-weight:600;
+  color:#334155;
+  margin-bottom:6px;
+}
+
+.form-field select,
+.form-field input,
+.form-field textarea{
+  width:100%;
+  padding:11px 12px;
+  border-radius:9px;
+  border:1.5px solid #e2e8f0;
+  background:#f8fafc;
+  color:#0f172a;
+  font-size:14.5px;
+  font-family:'Poppins',sans-serif;
+  outline:none;
+  transition:.2s;
+}
+
+.form-field select:focus,
+.form-field input:focus,
+.form-field textarea:focus{
+  border-color:var(--royal);
+  background:#fff;
+}
+
+.form-field textarea{
+  resize:vertical;
+  min-height:60px;
+}
+
+.modal-submit-btn{
+  background:var(--royal);
+  color:white;
+}
+
+.modal-submit-btn:hover{
+  background:#1d4ed8;
+  box-shadow:0 10px 25px rgba(29,78,216,.3);
+}
+
+.modal-success{
+  display:none;
+  text-align:center;
+}
+
+.modal-success i{
+  font-size:44px;
+  color:#16a34a;
+  margin-bottom:14px;
+}
+
+.modal-success h3{
+  color:#16a34a;
+}
+
+.modal-success p{
+  color:#475569;
+  font-size:14px;
+  margin:10px 0 20px;
+  line-height:22px;
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div class="auth-screen" id="login-screen">
+
+  <div class="icon"><i class="fas fa-gas-pump"></i></div>
+  <div class="icon"><i class="fas fa-car"></i></div>
+  <div class="icon"><i class="fas fa-motorcycle"></i></div>
+  <div class="icon"><i class="fas fa-truck"></i></div>
+
+  <div class="container">
+
+    <div class="logo"><i class="fas fa-gas-pump"></i></div>
+
+    <h1>FixNFuel</h1>
+    <p class="tagline">Emergency Fuel Delivery &amp; Mechanic Booking</p>
+
+    <p class="description">
+      Stuck with an empty tank or a car that won't start?
+      FixNFuel gets fuel or a nearby mechanic to your exact location, fast.
+    </p>
+
+    <div class="input-group">
+      <i class="fas fa-phone"></i>
+      <input type="tel" id="mobile" maxlength="10" placeholder="Enter Mobile Number">
+    </div>
+    <p class="error-msg" id="mobile-error">Enter a valid 10-digit mobile number</p>
+
+    <button id="send-otp-btn">Get OTP</button>
+
+    <div class="features">
+      <div class="feature">⛽ Fuel Delivery</div>
+      <div class="feature">🔧 Mechanic Help</div>
+      <div class="feature">📍 Live Tracking</div>
+      <div class="feature">🚚 Fast Delivery</div>
+      <div class="feature">🛡 Verified Partners</div>
+      <div class="feature">📞 24/7 Support</div>
+    </div>
+
+    <p class="footer">🚗 Fuel • Fix • Go with Confidence</p>
+
+  </div>
+</div>
+
+<!-- ============ OTP SCREEN ============ -->
+<div class="auth-screen" id="otp-screen" style="display:none;">
+
+  <div class="container">
+
+    <div class="logo"><i class="fas fa-shield-halved"></i></div>
+
+    <h1>Verify OTP</h1>
+    <p class="tagline">Enter the OTP sent to your mobile number</p>
+
+    <p class="mobile-line">Mobile: <strong id="otp-mobile-display"></strong></p>
+
+    <div class="input-group" style="text-align:center;">
+      <input type="text" id="otp" inputmode="numeric" maxlength="4" placeholder="----" style="padding-left:14px;letter-spacing:8px;text-align:center;">
+    </div>
+    <p class="error-msg" id="otp-error" style="text-align:center;">Invalid OTP, please try again</p>
+
+    <button id="verify-otp-btn">Verify OTP</button>
+
+    <p class="resend">
+      Didn't get the code?
+      <button class="link-btn" id="resend-btn">Resend OTP</button>
+    </p>
+
+    <button class="link-btn" id="change-number-btn" style="display:block;margin:14px auto 0;">
+      ← Change mobile number
+    </button>
+
+  </div>
+</div>
+
+<!-- ============ DASHBOARD SCREEN ============ -->
+<div id="dashboard-screen">
+
+  <header>
+    <div class="logo-row">
+      <i class="fas fa-gas-pump"></i>
+      <h2>Fix<span>N</span>Fuel</h2>
+    </div>
+
+    <nav>
+      <ul class="navbar">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Fuel Booking</a></li>
+        <li><a href="#">Mechanic</a></li>
+        <li><a href="#">Live Tracking</a></li>
+        <li><a href="#">History</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+
+    <button class="logout-btn" id="logout-btn">
+      <i class="fas fa-right-from-bracket"></i> Logout
+    </button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1 id="welcome"></h1>
+      <p>Emergency fuel delivery and mechanic booking, wherever you're stranded.</p>
+      <div class="hero-actions">
+        <button class="hero-btn" id="hero-fuel-btn"><i class="fas fa-gas-pump"></i> Book Fuel Now</button>
+        <button class="hero-btn hero-btn-outline" id="hero-mechanic-btn"><i class="fas fa-wrench"></i> Call a Mechanic</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="card">
+    <h3>User Information</h3>
+    <div class="info"><strong>📱 Mobile:</strong> <span id="dash-mobile"></span></div>
+    <div class="info"><strong>🕒 Login Time:</strong> <span id="dash-time"></span></div>
+    <div class="info"><strong>✅ Status:</strong> Logged In</div>
+  </div>
+
+  <section class="services">
+    <div class="service">
+      <i class="fas fa-gas-pump"></i>
+      <h4>Emergency Fuel</h4>
+      <p>Ran out of petrol or diesel? Get fuel delivered to your exact spot.</p>
+      <button class="svc-btn" id="svc-fuel-btn">Book Now</button>
+    </div>
+    <div class="service">
+      <i class="fas fa-wrench"></i>
+      <h4>Emergency Mechanic</h4>
+      <p>Breakdown, flat tyre, or won't start? Get a verified mechanic dispatched.</p>
+      <button class="svc-btn" id="svc-mechanic-btn">Request</button>
+    </div>
+    <div class="service">
+      <i class="fas fa-map-location-dot"></i>
+      <h4>Live Tracking</h4>
+      <p>Track your delivery partner.</p>
+      <button class="svc-btn">Track</button>
+    </div>
+    <div class="service">
+      <i class="fas fa-clock"></i>
+      <h4>Order History</h4>
+      <p>View your previous bookings.</p>
+      <button class="svc-btn">View</button>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    © 2026 FixNFuel | Fuel • Fix • Go with Confidence
+  </footer>
+
+</div>
+
+<!-- ============ BOOKING MODAL (Fuel / Mechanic) ============ -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close-btn">✕</button>
+
+    <div id="modal-form-view">
+      <div class="modal-icon" id="modal-icon"><i class="fas fa-gas-pump"></i></div>
+      <h3 id="modal-title">Book Emergency Fuel</h3>
+      <p class="modal-sub" id="modal-sub">We'll dispatch help to your location right away.</p>
+
+      <form id="booking-form">
+        <div class="form-field" id="fuel-type-field">
+          <label for="fuel-type">Fuel type</label>
+          <select id="fuel-type">
+            <option value="Petrol">Petrol</option>
+            <option value="Diesel">Diesel</option>
+          </select>
+        </div>
+
+        <div class="form-field" id="issue-field" style="display:none;">
+          <label for="issue-type">What's the problem?</label>
+          <select id="issue-type">
+            <option value="Won't start">Car won't start</option>
+            <option value="Flat tyre">Flat tyre</option>
+            <option value="Battery dead">Battery dead</option>
+            <option value="Engine trouble">Engine trouble</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="booking-location">Your location</label>
+          <input type="text" id="booking-location" placeholder="e.g. NH-48, near Km 22 milestone" required>
+        </div>
+
+        <div class="form-field">
+          <label for="booking-notes">Notes for the responder (optional)</label>
+          <textarea id="booking-notes" placeholder="Vehicle model, landmark, anything else that helps"></textarea>
+        </div>
+
+        <button type="submit" class="modal-submit-btn" id="modal-submit-btn">Confirm Booking</button>
+      </form>
+    </div>
+
+    <div class="modal-success" id="modal-success-view">
+      <i class="fas fa-circle-check"></i>
+      <h3>Request Sent</h3>
+      <p id="modal-success-text">Help is on the way to your location.</p>
+      <button class="modal-submit-btn" id="modal-done-btn">Done</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ---------------------------------------------------
+   Single-file app: login -> OTP -> dashboard
+   All state kept in localStorage, exactly like the
+   original 3-page flow, but without needing separate
+   HTML files or absolute redirects.
+--------------------------------------------------- */
+
+const loginScreen = document.getElementById("login-screen");
+const otpScreen   = document.getElementById("otp-screen");
+const dashScreen  = document.getElementById("dashboard-screen");
+
+function showScreen(name){
+  loginScreen.style.display = name === "login" ? "flex" : "none";
+  otpScreen.style.display   = name === "otp"   ? "flex" : "none";
+  dashScreen.style.display  = name === "dash"  ? "block" : "none";
+}
+
+/* ---------- boot: figure out where the user should land ---------- */
+function boot(){
+  const user = JSON.parse(localStorage.getItem("FixNFuelUser") || "null");
+  if(user && user.isLoggedIn){
+    renderDashboard(user);
+    showScreen("dash");
+  } else if(user && user.mobile){
+    document.getElementById("otp-mobile-display").textContent = user.mobile;
+    showScreen("otp");
+  } else {
+    showScreen("login");
+  }
+}
+
+/* ---------- LOGIN ---------- */
+document.getElementById("send-otp-btn").addEventListener("click", sendOTP);
+document.getElementById("mobile").addEventListener("keydown", e => {
+  if(e.key === "Enter") sendOTP();
+});
+
+function sendOTP(){
+  const mobileInput = document.getElementById("mobile");
+  const errorMsg = document.getElementById("mobile-error");
+  const mobile = mobileInput.value.trim();
+
+  if(!/^[6-9]\d{9}$/.test(mobile)){
+    errorMsg.style.display = "block";
+    mobileInput.focus();
+    return;
+  }
+  errorMsg.style.display = "none";
+
+  const user = {
+    mobile: mobile,
+    loginTime: new Date().toLocaleString(),
+    isLoggedIn: false
+  };
+  localStorage.setItem("FixNFuelUser", JSON.stringify(user));
+
+  const otp = Math.floor(1000 + Math.random() * 9000);
+  localStorage.setItem("FixNFuelOTP", String(otp));
+
+  alert("Demo OTP: " + otp);
+
+  document.getElementById("otp-mobile-display").textContent = mobile;
+  document.getElementById("otp").value = "";
+  document.getElementById("otp-error").style.display = "none";
+  showScreen("otp");
+}
+
+/* ---------- OTP ---------- */
+document.getElementById("verify-otp-btn").addEventListener("click", verifyOTP);
+document.getElementById("otp").addEventListener("keydown", e => {
+  if(e.key === "Enter") verifyOTP();
+});
+
+function verifyOTP(){
+  const user = JSON.parse(localStorage.getItem("FixNFuelUser") || "null");
+  if(!user){ showScreen("login"); return; }
+
+  const entered = document.getElementById("otp").value.trim();
+  const saved = localStorage.getItem("FixNFuelOTP");
+  const errorMsg = document.getElementById("otp-error");
+
+  if(entered && entered === saved){
+    user.isLoggedIn = true;
+    localStorage.setItem("FixNFuelUser", JSON.stringify(user));
+    errorMsg.style.display = "none";
+    renderDashboard(user);
+    showScreen("dash");
+  } else {
+    errorMsg.style.display = "block";
+  }
+}
+
+document.getElementById("resend-btn").addEventListener("click", () => {
+  const user = JSON.parse(localStorage.getItem("FixNFuelUser") || "null");
+  if(!user) return;
+  const otp = Math.floor(1000 + Math.random() * 9000);
+  localStorage.setItem("FixNFuelOTP", String(otp));
+  alert("Demo OTP: " + otp);
+});
+
+document.getElementById("change-number-btn").addEventListener("click", () => {
+  localStorage.removeItem("FixNFuelUser");
+  localStorage.removeItem("FixNFuelOTP");
+  document.getElementById("mobile").value = "";
+  document.getElementById("mobile-error").style.display = "none";
+  showScreen("login");
+});
+
+/* ---------- DASHBOARD ---------- */
+function renderDashboard(user){
+  document.getElementById("welcome").textContent = "Welcome back!";
+  document.getElementById("dash-mobile").textContent = user.mobile;
+  document.getElementById("dash-time").textContent = user.loginTime;
+}
+
+document.getElementById("logout-btn").addEventListener("click", () => {
+  localStorage.removeItem("FixNFuelUser");
+  localStorage.removeItem("FixNFuelOTP");
+  alert("Logged Out Successfully");
+  showScreen("login");
+});
+
+/* ---------- BOOKING MODAL (Fuel / Mechanic) ---------- */
+const bookingModal   = document.getElementById("booking-modal");
+const modalFormView  = document.getElementById("modal-form-view");
+const modalSuccess   = document.getElementById("modal-success-view");
+const modalIcon      = document.getElementById("modal-icon");
+const modalTitle     = document.getElementById("modal-title");
+const modalSub       = document.getElementById("modal-sub");
+const fuelTypeField  = document.getElementById("fuel-type-field");
+const issueField     = document.getElementById("issue-field");
+const bookingForm    = document.getElementById("booking-form");
+const modalSuccessTxt= document.getElementById("modal-success-text");
+
+let currentBookingType = "fuel";
+
+function openBookingModal(type){
+  currentBookingType = type;
+  bookingForm.reset();
+  modalFormView.style.display = "block";
+  modalSuccess.style.display = "none";
+
+  if(type === "fuel"){
+    modalIcon.innerHTML = '<i class="fas fa-gas-pump"></i>';
+    modalTitle.textContent = "Book Emergency Fuel";
+    modalSub.textContent = "We'll dispatch fuel to your location right away.";
+    fuelTypeField.style.display = "block";
+    issueField.style.display = "none";
+  } else {
+    modalIcon.innerHTML = '<i class="fas fa-wrench"></i>';
+    modalTitle.textContent = "Request Emergency Mechanic";
+    modalSub.textContent = "We'll send a verified mechanic to your location.";
+    fuelTypeField.style.display = "none";
+    issueField.style.display = "block";
+  }
+
+  bookingModal.classList.add("open");
+}
+
+function closeBookingModal(){
+  bookingModal.classList.remove("open");
+}
+
+document.getElementById("hero-fuel-btn").addEventListener("click", () => openBookingModal("fuel"));
+document.getElementById("hero-mechanic-btn").addEventListener("click", () => openBookingModal("mechanic"));
+document.getElementById("svc-fuel-btn").addEventListener("click", () => openBookingModal("fuel"));
+document.getElementById("svc-mechanic-btn").addEventListener("click", () => openBookingModal("mechanic"));
+
+document.getElementById("modal-close-btn").addEventListener("click", closeBookingModal);
+document.getElementById("modal-done-btn").addEventListener("click", closeBookingModal);
+bookingModal.addEventListener("click", (e) => {
+  if(e.target === bookingModal) closeBookingModal();
+});
+
+bookingForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const location = document.getElementById("booking-location").value.trim();
+  if(!location){
+    document.getElementById("booking-location").focus();
+    return;
+  }
+
+  const booking = {
+    type: currentBookingType,
+    detail: currentBookingType === "fuel"
+      ? document.getElementById("fuel-type").value
+      : document.getElementById("issue-type").value,
+    location: location,
+    notes: document.getElementById("booking-notes").value.trim(),
+    time: new Date().toLocaleString()
+  };
+
+  const bookings = JSON.parse(localStorage.getItem("FixNFuelBookings") || "[]");
+  bookings.unshift(booking);
+  localStorage.setItem("FixNFuelBookings", JSON.stringify(bookings));
+
+  modalSuccessTxt.textContent = currentBookingType === "fuel"
+    ? `${booking.detail} is on its way to "${booking.location}". Our team will call you shortly.`
+    : `A mechanic is being dispatched to "${booking.location}" for: ${booking.detail}.`;
+
+  modalFormView.style.display = "none";
+  modalSuccess.style.display = "block";
+});
+
+boot();
+</script>
+
+</body>
+</html>

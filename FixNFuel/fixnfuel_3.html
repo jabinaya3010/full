@@ -10,7 +10,7 @@
 
 <style>
 :root{
-  --navy:#0f172a;
+  --navy:#334155;
   --royal:#1e3a8a;
   --sky:#38bdf8;
   --gold:#FFD700;
@@ -35,7 +35,6 @@ body{
   color:var(--ink);
 }
 
-/* ---------- shared auth backdrop (login + otp) ---------- */
 .auth-screen{
   min-height:100vh;
   display:flex;
@@ -46,8 +45,8 @@ body{
   padding:20px;
 
   background-image:
-    linear-gradient(160deg, rgba(6,12,28,.88) 0%, rgba(15,23,42,.82) 45%, rgba(30,58,138,.72) 100%),
-    url("https://images.pexels.com/photos/2524161/pexels-photo-2524161.jpeg?auto=compress&cs=tinysrgb&w=1920");
+    linear-gradient(160deg, rgba(51,65,85,.38) 0%, rgba(51,65,85,.3) 45%, rgba(60,90,150,.22) 100%),
+    url("https://images.pexels.com/photos/6140995/pexels-photo-6140995.jpeg?auto=compress&cs=tinysrgb&w=1920");
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
@@ -90,7 +89,7 @@ body{
   backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);
   border:1px solid rgba(255,255,255,.2);
-  box-shadow:0 20px 50px rgba(0,0,0,.45);
+  box-shadow:0 20px 50px rgba(0,0,0,.35);
   color:white;
   text-align:center;
 }
@@ -222,11 +221,19 @@ button:disabled{
 }
 
 .feature{
-  padding:10px;
+  padding:14px;
   border-radius:8px;
   background:rgba(255,255,255,.10);
-  font-size:12.5px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
+
+.feature i{
+  color:var(--gold);
+  font-size:20px;
+}
+
 
 .footer{
   margin-top:20px;
@@ -234,7 +241,6 @@ button:disabled{
   color:#cbd5e1;
 }
 
-/* ---------- otp screen ---------- */
 .otp-boxes{
   display:flex;
   gap:10px;
@@ -271,7 +277,6 @@ button:disabled{
   display:inline;
 }
 
-/* ---------- dashboard ---------- */
 #dashboard-screen{
   display:none;
 }
@@ -283,7 +288,7 @@ header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  box-shadow:0 5px 15px rgba(0,0,0,.15);
+  box-shadow:0 5px 15px rgba(0,0,0,.12);
   position:sticky;
   top:0;
   z-index:10;
@@ -329,24 +334,91 @@ header{
   color:var(--gold);
 }
 
-.logout-btn{
-  background:rgba(255,255,255,.1);
-  color:white;
-  border:1px solid rgba(255,255,255,.25);
-  padding:10px 16px;
-  border-radius:8px;
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
-  transition:.25s;
-  width:auto;
+.profile-wrap{
+  position:relative;
 }
 
-.logout-btn:hover{
-  background:#dc2626;
-  border-color:#dc2626;
+.profile-icon-btn{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:var(--gold);
+  color:var(--navy);
+  border:2px solid rgba(255,255,255,.25);
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.25s;
+}
+
+.profile-icon-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 18px rgba(250,204,21,.35);
+}
+
+.profile-dropdown{
+  display:none;
+  position:absolute;
+  top:44px;
+  right:0;
+  padding-top:10px;
+  width:190px;
+  z-index:20;
+}
+
+.profile-dropdown-inner{
+  background:#fff;
+  color:#0f172a;
+  border-radius:12px;
+  box-shadow:0 15px 35px rgba(0,0,0,.25);
+  overflow:hidden;
+}
+
+.profile-dropdown.open{
+  display:block;
+}
+
+.profile-wrap:hover .profile-dropdown{
+  display:block;
+}
+
+.profile-dropdown button{
+  width:100%;
+  text-align:left;
+  padding:13px 16px;
+  background:#fff;
+  color:#0f172a;
+  border:none;
+  border-radius:0;
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.profile-dropdown button:hover{
+  background:#f1f5f9;
   transform:none;
   box-shadow:none;
+}
+
+.profile-dropdown button i{
+  width:16px;
+  color:var(--royal);
+}
+
+.profile-dropdown .dropdown-logout i{
+  color:#dc2626;
+}
+
+.profile-dropdown .dropdown-divider{
+  height:1px;
+  background:#e2e8f0;
 }
 
 @media(max-width:900px){
@@ -360,76 +432,146 @@ header{
   }
 }
 
-.hero{
-  min-height:420px;
+
+.promo-banner{
+  position:relative;
+  min-height:480px;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+}
+
+.promo-banner::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
   background:
-    linear-gradient(rgba(15,23,42,.72), rgba(15,23,42,.72)),
-    url("https://images.pexels.com/photos/2524161/pexels-photo-2524161.jpeg?auto=compress&cs=tinysrgb&w=1920");
+    linear-gradient(100deg, rgba(51,65,85,.72) 30%, rgba(51,65,85,.35) 100%),
+    url("https://chatgpt.com/backend-api/estuary/public_content/enc/eyJpZCI6Im1fNmE1MDgxMDQzY2Q0ODE5MThmYTlhMjA3NjcyZGE3ZDg6c2VkaW1lbnQ6Ly9kZWZkNDY3YTg5ZmY2MmUjZmlsZV8wMDAwMDAwMGI0MTQ3MWZhOTM1M2ExODgyOTYzOTk0NSN1bmZ1cmwiLCJnaXptb19pZCI6bnVsbCwidHMiOiIyMDY0NCIsInAiOiJweWkiLCJjaWQiOiIxIiwic2lnIjoiZjUyYWYzMTc5MmMwNjkzYzhjOTBjNDIyZTdjNzE0NzExZjNmNGM2YjYwYTIxOTkyODA2YjY3NDNmMjIwZTY2MyIsInYiOiIwIiwiY3MiOm51bGwsImNkbiI6bnVsbCwiZm4iOm51bGwsImNkIjpudWxsLCJjcCI6bnVsbCwibWEiOm51bGx9");
   background-size:cover;
   background-position:center;
-  background-repeat:no-repeat;
+  filter:brightness(1.6);
+}
+
+.promo-banner .promo-inner{
+  position:relative;
+  z-index:1;
+}
+
+.promo-inner{
   display:flex;
-  justify-content:center;
   align-items:center;
-  text-align:center;
-  color:white;
-  padding:40px 20px;
-}
-
-.hero-content{
-  max-width:700px;
-}
-
-.hero h1{
-  font-size:44px;
-  margin-bottom:15px;
-  line-height:1.15;
-}
-
-.hero p{
-  font-size:17px;
-  margin-bottom:25px;
-  color:#e2e8f0;
-}
-
-.hero-btn{
-  padding:14px 28px;
-  border:none;
-  border-radius:8px;
-  background:var(--gold);
-  color:var(--navy);
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-  transition:.25s;
-  width:auto;
-}
-
-.hero-btn:hover{
-  background:var(--gold-deep);
-  transform:translateY(-3px);
-}
-
-.hero-actions{
-  display:flex;
-  gap:14px;
-  justify-content:center;
+  justify-content:space-between;
+  gap:40px;
+  max-width:1100px;
+  margin:0 auto;
+  padding:50px 30px;
   flex-wrap:wrap;
 }
 
-.hero-actions .hero-btn{
-  width:auto;
-}
-
-.hero-btn-outline{
-  background:transparent;
+.promo-text{
+  max-width:480px;
   color:white;
-  border:1.5px solid rgba(255,255,255,.6);
 }
 
-.hero-btn-outline:hover{
-  background:rgba(255,255,255,.12);
-  transform:translateY(-3px);
+.promo-text span{
+  display:inline-block;
+  background:rgba(255,215,0,.15);
+  color:var(--gold);
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:12.5px;
+  font-weight:600;
+  letter-spacing:.5px;
+  margin-bottom:16px;
+}
+
+.promo-text h2{
+  font-size:36px;
+  line-height:1.2;
+  margin-bottom:14px;
+}
+
+.promo-text p{
+  font-size:15px;
+  color:#cbd5e1;
+  line-height:24px;
+  margin-bottom:24px;
+}
+
+.promo-cta{
+  width:auto;
+  padding:14px 26px;
+}
+
+/* CSS phone mockup */
+.phone-mockup{
+  width:230px;
+  height:460px;
+  background:#334155;
+  border-radius:36px;
+  border:6px solid #475569;
+  box-shadow:0 30px 60px rgba(0,0,0,.3);
+  position:relative;
+  flex-shrink:0;
+}
+
+.phone-mockup::before{
+  content:"";
+  position:absolute;
+  top:14px;
+  left:50%;
+  transform:translateX(-50%);
+  width:70px;
+  height:8px;
+  background:#475569;
+  border-radius:10px;
+}
+
+.phone-screen{
+  position:absolute;
+  inset:30px 10px 10px 10px;
+  background:linear-gradient(160deg, var(--royal), var(--navy));
+  border-radius:24px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  padding:20px;
+  text-align:center;
+}
+
+.phone-screen i{
+  font-size:34px;
+  color:var(--gold);
+}
+
+.phone-screen h4{
+  color:white;
+  font-size:16px;
+}
+
+.phone-screen p{
+  color:#cbd5e1;
+  font-size:11.5px;
+  line-height:16px;
+}
+
+.phone-screen .phone-btn{
+  width:100%;
+  padding:9px;
+  background:var(--gold);
+  color:var(--navy);
+  border-radius:8px;
+  font-size:12px;
+  font-weight:700;
+}
+
+@media(max-width:800px){
+  .promo-inner{ justify-content:center; text-align:center; }
+  .promo-text{ max-width:100%; }
 }
 
 .card{
@@ -462,50 +604,57 @@ header{
 }
 
 .service{
-  background:white;
-  padding:25px;
+  background:linear-gradient(160deg, #3f4f6b, #334155);
+  border:1px solid rgba(255,215,0,.15);
+  padding:28px 22px;
   border-radius:15px;
   text-align:center;
-  box-shadow:0 5px 15px rgba(0,0,0,.1);
+  box-shadow:0 8px 20px rgba(0,0,0,.2);
   transition:.3s;
-  color:#0f172a;
+  color:var(--ink);
 }
 
 .service:hover{
   transform:translateY(-8px);
+  border-color:rgba(255,215,0,.4);
+  box-shadow:0 15px 30px rgba(0,0,0,.3);
 }
 
 .service i{
-  font-size:42px;
-  color:var(--royal);
+  font-size:38px;
+  color:var(--gold);
   margin-bottom:15px;
 }
 
 .service h4{
+  color:#fff;
   margin-bottom:10px;
 }
 
 .service p{
   font-size:13.5px;
-  color:#475569;
-  margin-bottom:14px;
+  color:#94a3b8;
+  margin-bottom:16px;
 }
 
 .svc-btn{
   padding:10px 18px;
-  border:none;
+  border:1px solid var(--gold);
   border-radius:8px;
-  background:var(--royal);
-  color:white;
+  background:transparent;
+  color:var(--gold);
   cursor:pointer;
   width:auto;
   font-size:14px;
+  font-weight:600;
+  transition:.25s;
 }
 
 .svc-btn:hover{
-  background:#1d4ed8;
+  background:var(--gold);
+  color:var(--navy);
   transform:none;
-  box-shadow:none;
+  box-shadow:0 8px 18px rgba(250,204,21,.3);
 }
 
 footer.site-footer{
@@ -517,12 +666,11 @@ footer.site-footer{
   font-size:13.5px;
 }
 
-/* ---------- booking modal ---------- */
 .modal-overlay{
   display:none;
   position:fixed;
   inset:0;
-  background:rgba(6,10,20,.65);
+  background:rgba(51,65,85,.4);
   backdrop-filter:blur(4px);
   z-index:100;
   justify-content:center;
@@ -541,7 +689,7 @@ footer.site-footer{
   color:#0f172a;
   border-radius:16px;
   padding:30px;
-  box-shadow:0 25px 60px rgba(0,0,0,.4);
+  box-shadow:0 25px 60px rgba(0,0,0,.32);
   position:relative;
 }
 
@@ -665,7 +813,6 @@ footer.site-footer{
 </head>
 <body>
 
-<!-- ============ LOGIN SCREEN ============ -->
 <div class="auth-screen" id="login-screen">
 
   <div class="icon"><i class="fas fa-gas-pump"></i></div>
@@ -694,20 +841,19 @@ footer.site-footer{
     <button id="send-otp-btn">Get OTP</button>
 
     <div class="features">
-      <div class="feature">⛽ Fuel Delivery</div>
-      <div class="feature">🔧 Mechanic Help</div>
-      <div class="feature">📍 Live Tracking</div>
-      <div class="feature">🚚 Fast Delivery</div>
-      <div class="feature">🛡 Verified Partners</div>
-      <div class="feature">📞 24/7 Support</div>
-    </div>
+  <div class="feature"><i class="fas fa-gas-pump"></i></div>
+  <div class="feature"><i class="fas fa-wrench"></i></div>
+  <div class="feature"><i class="fas fa-location-dot"></i></div>
+  <div class="feature"><i class="fas fa-truck-fast"></i></div>
+  <div class="feature"><i class="fas fa-shield-halved"></i></div>
+  <div class="feature"><i class="fas fa-headset"></i></div>
+</div>
 
     <p class="footer">🚗 Fuel • Fix • Go with Confidence</p>
 
   </div>
 </div>
 
-<!-- ============ OTP SCREEN ============ -->
 <div class="auth-screen" id="otp-screen" style="display:none;">
 
   <div class="container">
@@ -738,7 +884,6 @@ footer.site-footer{
   </div>
 </div>
 
-<!-- ============ DASHBOARD SCREEN ============ -->
 <div id="dashboard-screen">
 
   <header>
@@ -758,28 +903,42 @@ footer.site-footer{
       </ul>
     </nav>
 
-    <button class="logout-btn" id="logout-btn">
-      <i class="fas fa-right-from-bracket"></i> Logout
-    </button>
-  </header>
-
-  <section class="hero">
-    <div class="hero-content">
-      <h1 id="welcome"></h1>
-      <p>Emergency fuel delivery and mechanic booking, wherever you're stranded.</p>
-      <div class="hero-actions">
-        <button class="hero-btn" id="hero-fuel-btn"><i class="fas fa-gas-pump"></i> Book Fuel Now</button>
-        <button class="hero-btn hero-btn-outline" id="hero-mechanic-btn"><i class="fas fa-wrench"></i> Call a Mechanic</button>
+    <div class="profile-wrap" id="profile-wrap">
+      <button class="profile-icon-btn" id="profile-icon-btn" aria-label="Account menu">
+        <i class="fas fa-user"></i>
+      </button>
+      <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-dropdown-inner">
+          <button id="profile-view-btn"><i class="fas fa-id-card"></i> Profile</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-logout" id="logout-btn"><i class="fas fa-right-from-bracket"></i> Logout</button>
+        </div>
       </div>
     </div>
-  </section>
+  </header>
 
-  <div class="card">
-    <h3>User Information</h3>
-    <div class="info"><strong>📱 Mobile:</strong> <span id="dash-mobile"></span></div>
-    <div class="info"><strong>🕒 Login Time:</strong> <span id="dash-time"></span></div>
-    <div class="info"><strong>✅ Status:</strong> Logged In</div>
+  
+  <section class="promo-banner">
+  <div class="promo-inner">
+    <div class="promo-text">
+      <span>24/7 EMERGENCY SUPPORT</span>
+      <h2>Fuel &amp; Mechanic Help, Wherever You're Stranded</h2>
+      <p>No matter the time or place, FixNFuel gets verified help to your exact location in minutes — not hours.</p>
+      <button class="hero-btn promo-cta">Get Help Now</button>
+    </div>
+
+    <div class="phone-mockup">
+      <div class="phone-screen">
+        <i class="fas fa-gas-pump"></i>
+        <h4>FixNFuel</h4>
+        <p>Fuel &amp; mechanic dispatched to your location</p>
+        <div class="phone-btn">Book Now</div>
+      </div>
+    </div>
   </div>
+</section>
+
+  
 
   <section class="services">
     <div class="service">
@@ -814,7 +973,35 @@ footer.site-footer{
 
 </div>
 
-<!-- ============ BOOKING MODAL (Fuel / Mechanic) ============ -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="profile-modal-close-btn">✕</button>
+
+    <div class="modal-icon"><i class="fas fa-user"></i></div>
+    <h3>My Profile</h3>
+    <p class="modal-sub">Your account details</p>
+
+    <div class="form-field">
+      <label>Mobile Number</label>
+      <div class="info" id="profile-mobile" style="margin:0;padding:11px 12px;border-radius:9px;border:1.5px solid #e2e8f0;background:#f8fafc;">-</div>
+    </div>
+
+    <div class="form-field">
+      <label>Login Time</label>
+      <div class="info" id="profile-login-time" style="margin:0;padding:11px 12px;border-radius:9px;border:1.5px solid #e2e8f0;background:#f8fafc;">-</div>
+    </div>
+
+    <div class="form-field">
+      <label>Status</label>
+      <div class="info" style="margin:0;padding:11px 12px;border-radius:9px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#16a34a;font-weight:600;">
+        <i class="fas fa-circle" style="font-size:8px;"></i> Logged In
+      </div>
+    </div>
+
+    <button class="modal-submit-btn" id="profile-modal-done-btn" style="margin-top:6px;">Close</button>
+  </div>
+</div>
+
 <div class="modal-overlay" id="booking-modal">
   <div class="modal-box">
     <button class="modal-close" id="modal-close-btn">✕</button>
@@ -869,13 +1056,6 @@ footer.site-footer{
 </div>
 
 <script>
-/* ---------------------------------------------------
-   Single-file app: login -> OTP -> dashboard
-   All state kept in localStorage, exactly like the
-   original 3-page flow, but without needing separate
-   HTML files or absolute redirects.
---------------------------------------------------- */
-
 const loginScreen = document.getElementById("login-screen");
 const otpScreen   = document.getElementById("otp-screen");
 const dashScreen  = document.getElementById("dashboard-screen");
@@ -886,7 +1066,6 @@ function showScreen(name){
   dashScreen.style.display  = name === "dash"  ? "block" : "none";
 }
 
-/* ---------- boot: figure out where the user should land ---------- */
 function boot(){
   const user = JSON.parse(localStorage.getItem("FixNFuelUser") || "null");
   if(user && user.isLoggedIn){
@@ -900,7 +1079,6 @@ function boot(){
   }
 }
 
-/* ---------- LOGIN ---------- */
 document.getElementById("send-otp-btn").addEventListener("click", sendOTP);
 document.getElementById("mobile").addEventListener("keydown", e => {
   if(e.key === "Enter") sendOTP();
@@ -936,7 +1114,6 @@ function sendOTP(){
   showScreen("otp");
 }
 
-/* ---------- OTP ---------- */
 document.getElementById("verify-otp-btn").addEventListener("click", verifyOTP);
 document.getElementById("otp").addEventListener("keydown", e => {
   if(e.key === "Enter") verifyOTP();
@@ -977,21 +1154,51 @@ document.getElementById("change-number-btn").addEventListener("click", () => {
   showScreen("login");
 });
 
-/* ---------- DASHBOARD ---------- */
 function renderDashboard(user){
-  document.getElementById("welcome").textContent = "Welcome back!";
-  document.getElementById("dash-mobile").textContent = user.mobile;
-  document.getElementById("dash-time").textContent = user.loginTime;
+ 
+  document.getElementById("profile-mobile").textContent = user.mobile;
+  document.getElementById("profile-login-time").textContent = user.loginTime;
 }
 
+const profileWrap     = document.getElementById("profile-wrap");
+const profileIconBtn  = document.getElementById("profile-icon-btn");
+const profileDropdown = document.getElementById("profile-dropdown");
+
+profileIconBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  profileDropdown.classList.toggle("open");
+});
+
+document.addEventListener("click", (e) => {
+  if(!profileWrap.contains(e.target)){
+    profileDropdown.classList.remove("open");
+  }
+});
+
+const profileModal = document.getElementById("profile-modal");
+
+document.getElementById("profile-view-btn").addEventListener("click", () => {
+  profileDropdown.classList.remove("open");
+  profileModal.classList.add("open");
+});
+
+function closeProfileModal(){
+  profileModal.classList.remove("open");
+}
+document.getElementById("profile-modal-close-btn").addEventListener("click", closeProfileModal);
+document.getElementById("profile-modal-done-btn").addEventListener("click", closeProfileModal);
+profileModal.addEventListener("click", (e) => {
+  if(e.target === profileModal) closeProfileModal();
+});
+
 document.getElementById("logout-btn").addEventListener("click", () => {
+  profileDropdown.classList.remove("open");
   localStorage.removeItem("FixNFuelUser");
   localStorage.removeItem("FixNFuelOTP");
   alert("Logged Out Successfully");
   showScreen("login");
 });
 
-/* ---------- BOOKING MODAL (Fuel / Mechanic) ---------- */
 const bookingModal   = document.getElementById("booking-modal");
 const modalFormView  = document.getElementById("modal-form-view");
 const modalSuccess   = document.getElementById("modal-success-view");
@@ -1032,8 +1239,7 @@ function closeBookingModal(){
   bookingModal.classList.remove("open");
 }
 
-document.getElementById("hero-fuel-btn").addEventListener("click", () => openBookingModal("fuel"));
-document.getElementById("hero-mechanic-btn").addEventListener("click", () => openBookingModal("mechanic"));
+
 document.getElementById("svc-fuel-btn").addEventListener("click", () => openBookingModal("fuel"));
 document.getElementById("svc-mechanic-btn").addEventListener("click", () => openBookingModal("mechanic"));
 

@@ -447,11 +447,11 @@ header{
   inset:0;
   z-index:0;
   background:
-    linear-gradient(100deg, rgba(51,65,85,.72) 30%, rgba(51,65,85,.35) 100%),
+    linear-gradient(100deg, rgba(1, 5, 12, 0.651) 100%, rgba(51,65,85,.35) 100%),
     url("https://chatgpt.com/backend-api/estuary/public_content/enc/eyJpZCI6Im1fNmE1MDgxMDQzY2Q0ODE5MThmYTlhMjA3NjcyZGE3ZDg6c2VkaW1lbnQ6Ly9kZWZkNDY3YTg5ZmY2MmUjZmlsZV8wMDAwMDAwMGI0MTQ3MWZhOTM1M2ExODgyOTYzOTk0NSN1bmZ1cmwiLCJnaXptb19pZCI6bnVsbCwidHMiOiIyMDY0NCIsInAiOiJweWkiLCJjaWQiOiIxIiwic2lnIjoiZjUyYWYzMTc5MmMwNjkzYzhjOTBjNDIyZTdjNzE0NzExZjNmNGM2YjYwYTIxOTkyODA2YjY3NDNmMjIwZTY2MyIsInYiOiIwIiwiY3MiOm51bGwsImNkbiI6bnVsbCwiZm4iOm51bGwsImNkIjpudWxsLCJjcCI6bnVsbCwibWEiOm51bGx9");
   background-size:cover;
-  background-position:center;
-  filter:brightness(1.6);
+  background-position:40% center;
+  filter:brightness(1.2);
 }
 
 .promo-banner .promo-inner{
@@ -462,7 +462,7 @@ header{
 .promo-inner{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:flex-start;
   gap:40px;
   max-width:1100px;
   margin:0 auto;
@@ -473,11 +473,13 @@ header{
 .promo-text{
   max-width:480px;
   color:white;
+  position:relative;
+  left:-325px;
 }
 
 .promo-text span{
   display:inline-block;
-  background:rgba(255,215,0,.15);
+  background:rgba(123, 105, 4, 0.299);
   color:var(--gold);
   padding:6px 14px;
   border-radius:20px;

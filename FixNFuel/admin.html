@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - FixNFuel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+:root{
+  --navy:#334155;
+  --royal:#1e3a8a;
+  --sky:#38bdf8;
+  --gold:#FFD700;
+  --gold-deep:#facc15;
+  --ink:#e2e8f0;
+  --danger:#ef4444;
+  --success:#16a34a;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+h1,h2,h3{
+  font-family:'Sora',sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:var(--navy);
+  color:var(--ink);
+}
+
+/* ---------------- ADMIN LOGIN ---------------- */
+
+.admin-login-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.admin-login-box{
+  width:400px;
+  max-width:100%;
+  background:linear-gradient(160deg, #3f4f6b, #334155);
+  border:1px solid rgba(255,215,0,.15);
+  border-radius:18px;
+  padding:36px;
+  text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+
+.admin-login-box .logo{
+  width:70px;
+  height:70px;
+  background:var(--gold);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 16px;
+  font-size:30px;
+  color:var(--navy);
+}
+
+.admin-login-box h1{
+  font-size:24px;
+  margin-bottom:6px;
+}
+
+.admin-login-box p.sub{
+  color:#94a3b8;
+  font-size:13.5px;
+  margin-bottom:26px;
+}
+
+.admin-input-group{
+  text-align:left;
+  margin-bottom:18px;
+}
+
+.admin-input-group label{
+  display:block;
+  font-size:12.5px;
+  font-weight:600;
+  color:#cbd5e1;
+  margin-bottom:6px;
+}
+
+.admin-input-group input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1.5px solid #475569;
+  background:#1e293b;
+  color:#fff;
+  font-size:14.5px;
+  outline:none;
+  transition:.2s;
+}
+
+.admin-input-group input:focus{
+  border-color:var(--gold);
+  background:#243244;
+}
+
+.admin-login-error{
+  display:none;
+  color:#fca5a5;
+  font-size:12.5px;
+  text-align:left;
+  margin:-10px 0 14px;
+}
+
+.admin-btn{
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:10px;
+  background:var(--gold);
+  color:#171310;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.admin-btn:hover{
+  background:var(--gold-deep);
+  transform:translateY(-2px);
+  box-shadow:0 10px 22px rgba(250,204,21,.3);
+}
+
+.admin-hint{
+  margin-top:18px;
+  font-size:12px;
+  color:#64748b;
+}
+
+/* ---------------- ADMIN DASHBOARD ---------------- */
+
+#admin-dashboard{
+  display:none;
+}
+
+header.admin-header{
+  background:var(--navy);
+  color:#fff;
+  padding:15px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 5px 15px rgba(0,0,0,.12);
+  position:sticky;
+  top:0;
+  z-index:10;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.admin-logo-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.admin-logo-row i{
+  color:var(--gold);
+  font-size:26px;
+}
+
+.admin-logo-row h2{
+  font-size:19px;
+}
+
+.admin-logo-row h2 span{
+  color:var(--gold);
+}
+
+.admin-logo-row .badge{
+  background:rgba(255,215,0,.15);
+  color:var(--gold);
+  font-size:11px;
+  font-weight:700;
+  padding:4px 10px;
+  border-radius:20px;
+  letter-spacing:.5px;
+  margin-left:8px;
+}
+
+.admin-header-actions{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.admin-header-actions a{
+  color:#cbd5e1;
+  text-decoration:none;
+  font-size:13.5px;
+}
+
+.admin-header-actions a:hover{
+  color:var(--gold);
+}
+
+.admin-logout-btn{
+  background:transparent;
+  border:1.5px solid rgba(255,255,255,.25);
+  color:#fff;
+  padding:9px 16px;
+  border-radius:8px;
+  font-size:13.5px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.admin-logout-btn:hover{
+  border-color:var(--gold);
+  color:var(--gold);
+}
+
+.admin-wrap{
+  max-width:1200px;
+  margin:0 auto;
+  padding:30px 24px 60px;
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:18px;
+  margin-bottom:30px;
+}
+
+.stat-card{
+  background:linear-gradient(160deg, #3f4f6b, #334155);
+  border:1px solid rgba(255,215,0,.15);
+  border-radius:14px;
+  padding:20px 22px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,.2);
+}
+
+.stat-card .stat-icon{
+  width:48px;
+  height:48px;
+  border-radius:12px;
+  background:rgba(255,215,0,.12);
+  color:var(--gold);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  flex-shrink:0;
+}
+
+.stat-card .stat-value{
+  font-size:26px;
+  font-weight:700;
+  color:#fff;
+  font-family:'Sora',sans-serif;
+}
+
+.stat-card .stat-label{
+  font-size:12.5px;
+  color:#94a3b8;
+}
+
+.panel{
+  background:linear-gradient(160deg, #3f4f6b, #334155);
+  border:1px solid rgba(255,215,0,.15);
+  border-radius:16px;
+  padding:24px;
+  box-shadow:0 8px 20px rgba(0,0,0,.2);
+  margin-bottom:26px;
+}
+
+.panel-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+
+.panel-head h3{
+  font-size:18px;
+  color:#fff;
+}
+
+.panel-head .panel-sub{
+  font-size:12.5px;
+  color:#94a3b8;
+  margin-top:2px;
+}
+
+.filter-tabs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.filter-tabs button{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  color:#cbd5e1;
+  padding:7px 14px;
+  border-radius:20px;
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.filter-tabs button:hover{
+  border-color:var(--gold);
+  color:var(--gold);
+}
+
+.filter-tabs button.active{
+  background:var(--gold);
+  border-color:var(--gold);
+  color:var(--navy);
+}
+
+.booking-search{
+  padding:9px 14px;
+  border-radius:9px;
+  border:1.5px solid #475569;
+  background:#1e293b;
+  color:#fff;
+  font-size:13.5px;
+  outline:none;
+  min-width:220px;
+}
+
+.booking-search:focus{
+  border-color:var(--gold);
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table.booking-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13.5px;
+}
+
+table.booking-table th{
+  text-align:left;
+  padding:12px 14px;
+  color:#94a3b8;
+  font-size:11.5px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+  white-space:nowrap;
+}
+
+table.booking-table td{
+  padding:14px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  vertical-align:top;
+  color:#e2e8f0;
+}
+
+table.booking-table tr:hover td{
+  background:rgba(255,255,255,.03);
+}
+
+.type-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+}
+
+.type-pill.fuel{
+  background:rgba(56,189,248,.15);
+  color:var(--sky);
+}
+
+.type-pill.mechanic{
+  background:rgba(255,215,0,.15);
+  color:var(--gold);
+}
+
+.status-select{
+  padding:6px 10px;
+  border-radius:8px;
+  border:1.5px solid #475569;
+  background:#1e293b;
+  color:#fff;
+  font-size:12.5px;
+  font-weight:600;
+  outline:none;
+  cursor:pointer;
+}
+
+.status-select.status-Pending{ color:#fbbf24; }
+.status-select.status-Dispatched{ color:var(--sky); }
+.status-select.status-Completed{ color:var(--success); }
+.status-select.status-Cancelled{ color:var(--danger); }
+
+.row-delete-btn{
+  background:transparent;
+  border:none;
+  color:#94a3b8;
+  font-size:15px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.row-delete-btn:hover{
+  color:var(--danger);
+}
+
+.empty-row td{
+  text-align:center;
+  padding:44px 14px;
+  color:#94a3b8;
+}
+
+.empty-row i{
+  font-size:34px;
+  display:block;
+  margin-bottom:12px;
+  color:#64748b;
+}
+
+.clear-all-btn{
+  background:transparent;
+  border:1.5px solid rgba(239,68,68,.4);
+  color:#fca5a5;
+  padding:8px 16px;
+  border-radius:8px;
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.clear-all-btn:hover{
+  background:rgba(239,68,68,.12);
+  border-color:var(--danger);
+}
+
+@media(max-width:700px){
+  .panel-head{ flex-direction:column; align-items:flex-start; }
+  .booking-search{ width:100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= ADMIN LOGIN ================= -->
+<div class="admin-login-screen" id="admin-login-screen">
+  <div class="admin-login-box">
+    <div class="logo"><i class="fas fa-user-shield"></i></div>
+    <h1>Admin Login</h1>
+    <p class="sub">Sign in to manage FixNFuel bookings</p>
+
+    <div class="admin-input-group">
+      <label for="admin-username">Username</label>
+      <input type="text" id="admin-username" placeholder="admin" autocomplete="username">
+    </div>
+
+    <div class="admin-input-group">
+      <label for="admin-password">Password</label>
+      <input type="password" id="admin-password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <p class="admin-login-error" id="admin-login-error">Invalid username or password</p>
+
+    <button class="admin-btn" id="admin-login-btn">Login</button>
+
+    <p class="admin-hint">Demo credentials — username: <strong>admin</strong>, password: <strong>admin123</strong></p>
+  </div>
+</div>
+
+<!-- ================= ADMIN DASHBOARD ================= -->
+<div id="admin-dashboard">
+
+  <header class="admin-header">
+    <div class="admin-logo-row">
+      <i class="fas fa-gas-pump"></i>
+      <h2>Fix<span>N</span>Fuel <span class="badge">ADMIN</span></h2>
+    </div>
+
+    <div class="admin-header-actions">
+      <button class="admin-logout-btn" id="admin-logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <div class="admin-wrap">
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-list-check"></i></div>
+        <div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label">Total Bookings</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-gas-pump"></i></div>
+        <div>
+          <div class="stat-value" id="stat-fuel">0</div>
+          <div class="stat-label">Fuel Requests</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-wrench"></i></div>
+        <div>
+          <div class="stat-value" id="stat-mechanic">0</div>
+          <div class="stat-label">Mechanic Requests</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div>
+          <div class="stat-value" id="stat-pending">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>Bookings</h3>
+          <p class="panel-sub">All fuel &amp; mechanic requests submitted from this browser</p>
+        </div>
+      </div>
+
+      <div class="panel-head" style="margin-bottom:14px;">
+        <div class="filter-tabs" id="filter-tabs">
+          <button data-filter="all" class="active">All</button>
+          <button data-filter="fuel">Fuel</button>
+          <button data-filter="mechanic">Mechanic</button>
+          <button data-filter="Pending">Pending</button>
+          <button data-filter="Dispatched">Dispatched</button>
+          <button data-filter="Completed">Completed</button>
+          <button data-filter="Cancelled">Cancelled</button>
+        </div>
+        <input type="text" class="booking-search" id="booking-search" placeholder="Search by customer, location or notes...">
+      </div>
+
+      <div class="table-wrap">
+        <table class="booking-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Type</th>
+              <th>Detail</th>
+              <th>Location</th>
+              <th>Notes</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="booking-table-body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>Logged-in Users</h3>
+          <p class="panel-sub">Full history of every user who has logged in on this browser — new logins no longer erase old ones</p>
+        </div>
+        <button class="clear-all-btn" id="clear-users-btn"><i class="fas fa-trash"></i> Clear user history</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="booking-table">
+          <thead>
+            <tr>
+              <th>Mobile Number</th>
+              <th>Login Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="user-table-body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "admin123";
+
+const loginScreen = document.getElementById("admin-login-screen");
+const dashboard    = document.getElementById("admin-dashboard");
+
+function showAdminScreen(loggedIn){
+  loginScreen.style.display = loggedIn ? "none" : "flex";
+  dashboard.style.display   = loggedIn ? "block" : "none";
+}
+
+function bootAdmin(){
+  const isAdmin = sessionStorage.getItem("FixNFuelAdmin") === "true";
+  showAdminScreen(isAdmin);
+  if(isAdmin) renderAll();
+}
+
+document.getElementById("admin-login-btn").addEventListener("click", tryAdminLogin);
+document.getElementById("admin-password").addEventListener("keydown", e => {
+  if(e.key === "Enter") tryAdminLogin();
+});
+
+function tryAdminLogin(){
+  const u = document.getElementById("admin-username").value.trim();
+  const p = document.getElementById("admin-password").value.trim();
+  const errorMsg = document.getElementById("admin-login-error");
+
+  if(u === ADMIN_USER && p === ADMIN_PASS){
+    errorMsg.style.display = "none";
+    sessionStorage.setItem("FixNFuelAdmin", "true");
+    showAdminScreen(true);
+    renderAll();
+  } else {
+    errorMsg.style.display = "block";
+  }
+}
+
+document.getElementById("admin-logout-btn").addEventListener("click", () => {
+  sessionStorage.removeItem("FixNFuelAdmin");
+  document.getElementById("admin-username").value = "";
+  document.getElementById("admin-password").value = "";
+  showAdminScreen(false);
+});
+
+/* ---------------- DATA HELPERS ---------------- */
+
+function getBookings(){
+  return JSON.parse(localStorage.getItem("FixNFuelBookings") || "[]");
+}
+
+function saveBookings(bookings){
+  localStorage.setItem("FixNFuelBookings", JSON.stringify(bookings));
+}
+
+function ensureStatuses(bookings){
+  let changed = false;
+  bookings.forEach(b => {
+    if(!b.status){ b.status = "Pending"; changed = true; }
+    if(!b.id){ b.id = Math.random().toString(36).slice(2); changed = true; }
+  });
+  if(changed) saveBookings(bookings);
+  return bookings;
+}
+
+/*
+  ---------------- USER LOGIN HISTORY ----------------
+  CHANGE: previously the login page saved a single object to
+  "FixNFuelUser", so every new login overwrote the last one and the
+  admin panel could only ever show the most recent user.
+
+  Now we read/write "FixNFuelUsers" (an ARRAY). getUsers() also
+  migrates any old single-object "FixNFuelUser" value into the array
+  once, so nothing already saved is lost.
+
+  IMPORTANT: your login page (where mobile/OTP login happens) also
+  needs to be updated to APPEND to this array instead of overwriting
+  one object. See the appendUserLogin() snippet below — copy that
+  function (or its logic) into your login page's JS and call it
+  instead of the old localStorage.setItem("FixNFuelUser", ...) line.
+*/
+
+function getUsers(){
+  const list = JSON.parse(localStorage.getItem("FixNFuelUsers") || "[]");
+
+  // one-time migration from the old single-object key, if present
+  const legacy = localStorage.getItem("FixNFuelUser");
+  if(legacy){
+    try{
+      const legacyUser = JSON.parse(legacy);
+      if(legacyUser && !list.some(u => u.mobile === legacyUser.mobile && u.loginTime === legacyUser.loginTime)){
+        list.push(legacyUser);
+        localStorage.setItem("FixNFuelUsers", JSON.stringify(list));
+      }
+    }catch(e){ /* ignore malformed legacy value */ }
+    localStorage.removeItem("FixNFuelUser");
+  }
+
+  return list;
+}
+
+function saveUsers(list){
+  localStorage.setItem("FixNFuelUsers", JSON.stringify(list));
+}
+
+// Reference implementation for the LOGIN PAGE: call this instead of
+// overwriting "FixNFuelUser" whenever a user logs in successfully.
+function appendUserLogin(userObj){
+  const list = JSON.parse(localStorage.getItem("FixNFuelUsers") || "[]");
+  list.push(userObj); // newest login is appended, older ones are kept
+  localStorage.setItem("FixNFuelUsers", JSON.stringify(list));
+}
+
+let currentFilter = "all";
+let currentSearch = "";
+
+function renderAll(){
+  renderStats();
+  renderBookingsTable();
+  renderUserTable();
+}
+
+function renderStats(){
+  const bookings = ensureStatuses(getBookings());
+  document.getElementById("stat-total").textContent = bookings.length;
+  document.getElementById("stat-fuel").textContent = bookings.filter(b => b.type === "fuel").length;
+  document.getElementById("stat-mechanic").textContent = bookings.filter(b => b.type === "mechanic").length;
+  document.getElementById("stat-pending").textContent = bookings.filter(b => b.status === "Pending").length;
+}
+
+function renderBookingsTable(){
+  const bookings = ensureStatuses(getBookings());
+  const tbody = document.getElementById("booking-table-body");
+
+  let filtered = bookings;
+
+  if(currentFilter === "fuel" || currentFilter === "mechanic"){
+    filtered = filtered.filter(b => b.type === currentFilter);
+  } else if(currentFilter !== "all"){
+    filtered = filtered.filter(b => b.status === currentFilter);
+  }
+
+  if(currentSearch.trim()){
+    const q = currentSearch.trim().toLowerCase();
+    filtered = filtered.filter(b =>
+      (b.location || "").toLowerCase().includes(q) ||
+      (b.notes || "").toLowerCase().includes(q) ||
+      (b.detail || "").toLowerCase().includes(q) ||
+      (b.customerMobile || "").toLowerCase().includes(q)
+    );
+  }
+
+  if(!filtered.length){
+    tbody.innerHTML = `
+      <tr class="empty-row">
+        <td colspan="8">
+          <i class="fas fa-inbox"></i>
+          No bookings match this view.
+        </td>
+      </tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(b => `
+    <tr>
+      <td style="white-space:nowrap;">
+        <i class="fas fa-phone" style="color:#94a3b8;font-size:11px;margin-right:5px;"></i>${escapeHtml(b.customerMobile || '-')}
+      </td>
+      <td>
+        <span class="type-pill ${b.type}">
+          <i class="fas fa-${b.type === 'fuel' ? 'gas-pump' : 'wrench'}"></i>
+          ${b.type === 'fuel' ? 'Fuel' : 'Mechanic'}
+        </span>
+      </td>
+      <td>${escapeHtml(b.detail || '-')}</td>
+      <td>${escapeHtml(b.location || '-')}</td>
+      <td style="max-width:220px;">${escapeHtml(b.notes || '—')}</td>
+      <td style="white-space:nowrap;color:#94a3b8;">${escapeHtml(b.time || '-')}</td>
+      <td>
+        <select class="status-select status-${b.status}" data-id="${b.id}">
+          <option ${b.status === 'Pending' ? 'selected' : ''}>Pending</option>
+          <option ${b.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
+          <option ${b.status === 'Completed' ? 'selected' : ''}>Completed</option>
+          <option ${b.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+        </select>
+      </td>
+      <td>
+        <button class="row-delete-btn" data-id="${b.id}" title="Delete booking">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  `).join("");
+
+  tbody.querySelectorAll(".status-select").forEach(sel => {
+    sel.addEventListener("change", () => {
+      const bookings = getBookings();
+      const target = bookings.find(b => b.id === sel.dataset.id);
+      if(target){
+        target.status = sel.value;
+        saveBookings(bookings);
+        renderAll();
+      }
+    });
+  });
+
+  tbody.querySelectorAll(".row-delete-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if(!confirm("Delete this booking?")) return;
+      const bookings = getBookings().filter(b => b.id !== btn.dataset.id);
+      saveBookings(bookings);
+      renderAll();
+    });
+  });
+}
+
+function renderUserTable(){
+  const users = getUsers();
+  const tbody = document.getElementById("user-table-body");
+
+  if(!users.length){
+    tbody.innerHTML = `
+      <tr class="empty-row">
+        <td colspan="3">
+          <i class="fas fa-user-slash"></i>
+          No user logins recorded yet.
+        </td>
+      </tr>`;
+    return;
+  }
+
+  // newest login first
+  const ordered = [...users].reverse();
+
+  tbody.innerHTML = ordered.map(user => `
+    <tr>
+      <td>${escapeHtml(user.mobile || '-')}</td>
+      <td>${escapeHtml(user.loginTime || '-')}</td>
+      <td>
+        ${user.isLoggedIn
+          ? '<span style="color:var(--success);font-weight:600;"><i class="fas fa-circle" style="font-size:8px;"></i> Logged In</span>'
+          : '<span style="color:#94a3b8;">OTP Pending</span>'}
+      </td>
+    </tr>`).join("");
+}
+
+document.getElementById("filter-tabs").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-filter]");
+  if(!btn) return;
+  currentFilter = btn.dataset.filter;
+  document.querySelectorAll("#filter-tabs button").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderBookingsTable();
+});
+
+document.getElementById("booking-search").addEventListener("input", (e) => {
+  currentSearch = e.target.value;
+  renderBookingsTable();
+});
+
+document.getElementById("clear-users-btn").addEventListener("click", () => {
+  if(!confirm("Delete ALL user login history? This cannot be undone.")) return;
+  saveUsers([]);
+  renderAll();
+});
+
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+bootAdmin();
+</script>
+
+</body>
+</html>

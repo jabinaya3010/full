@@ -196,22 +196,6 @@ header.admin-header{
   margin-left:8px;
 }
 
-.admin-header-actions{
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
-.admin-header-actions a{
-  color:#cbd5e1;
-  text-decoration:none;
-  font-size:13.5px;
-}
-
-.admin-header-actions a:hover{
-  color:var(--gold);
-}
-
 .admin-logout-btn{
   background:transparent;
   border:1.5px solid rgba(255,255,255,.25);
@@ -420,6 +404,14 @@ table.booking-table tr:hover td{
 .status-select.status-Completed{ color:var(--success); }
 .status-select.status-Cancelled{ color:var(--danger); }
 
+.dispatch-hint{
+  display:block;
+  font-size:10.5px;
+  color:#64748b;
+  margin-top:4px;
+  max-width:150px;
+}
+
 .row-delete-btn{
   background:transparent;
   border:none;
@@ -547,7 +539,7 @@ table.booking-table tr:hover td{
       <div class="panel-head">
         <div>
           <h3>Bookings</h3>
-          <p class="panel-sub">All fuel &amp; mechanic requests submitted from this browser</p>
+          <p class="panel-sub">Set status to <strong style="color:var(--sky);">Dispatched</strong> to assign a partner and start live tracking for that customer.</p>
         </div>
       </div>
 
@@ -588,7 +580,7 @@ table.booking-table tr:hover td{
       <div class="panel-head">
         <div>
           <h3>Logged-in Users</h3>
-          <p class="panel-sub">Full history of every user who has logged in on this browser — new logins no longer erase old ones</p>
+          <p class="panel-sub">Full history of every user who has logged in on this browser</p>
         </div>
         <button class="clear-all-btn" id="clear-users-btn"><i class="fas fa-trash"></i> Clear user history</button>
       </div>
@@ -676,27 +668,8 @@ function ensureStatuses(bookings){
   return bookings;
 }
 
-/*
-  ---------------- USER LOGIN HISTORY ----------------
-  CHANGE: previously the login page saved a single object to
-  "FixNFuelUser", so every new login overwrote the last one and the
-  admin panel could only ever show the most recent user.
-
-  Now we read/write "FixNFuelUsers" (an ARRAY). getUsers() also
-  migrates any old single-object "FixNFuelUser" value into the array
-  once, so nothing already saved is lost.
-
-  IMPORTANT: your login page (where mobile/OTP login happens) also
-  needs to be updated to APPEND to this array instead of overwriting
-  one object. See the appendUserLogin() snippet below — copy that
-  function (or its logic) into your login page's JS and call it
-  instead of the old localStorage.setItem("FixNFuelUser", ...) line.
-*/
-
 function getUsers(){
   const list = JSON.parse(localStorage.getItem("FixNFuelUsers") || "[]");
-
-  // one-time migration from the old single-object key, if present
   const legacy = localStorage.getItem("FixNFuelUser");
   if(legacy){
     try{
@@ -706,9 +679,7 @@ function getUsers(){
         localStorage.setItem("FixNFuelUsers", JSON.stringify(list));
       }
     }catch(e){ /* ignore malformed legacy value */ }
-    localStorage.removeItem("FixNFuelUser");
   }
-
   return list;
 }
 
@@ -716,12 +687,53 @@ function saveUsers(list){
   localStorage.setItem("FixNFuelUsers", JSON.stringify(list));
 }
 
-// Reference implementation for the LOGIN PAGE: call this instead of
-// overwriting "FixNFuelUser" whenever a user logs in successfully.
-function appendUserLogin(userObj){
-  const list = JSON.parse(localStorage.getItem("FixNFuelUsers") || "[]");
-  list.push(userObj); // newest login is appended, older ones are kept
-  localStorage.setItem("FixNFuelUsers", JSON.stringify(list));
+/*
+  ---------------- DISPATCH -> LIVE TRACKING ----------------
+  Matches the logic on the customer-facing site exactly: setting a
+  booking's status to "Dispatched" here creates a delivery record at
+  "FixNFuelActiveDelivery:<customerMobile>", which is what the
+  customer's Live Tracking page reads. Before this runs, that key
+  doesn't exist, so the customer sees "Waiting for dispatch" and
+  cannot see any partner or map until an admin does this.
+*/
+
+const PARTNER_POOL = {
+  fuel: [
+    { name:"Ravi Kumar", vehicle:"Fuel Tanker \u2022 TN 45 AX 3312", phone:"+91 90000 11122", rating:"4.8" },
+    { name:"Suresh M.", vehicle:"Fuel Van \u2022 TN 09 BZ 7741", phone:"+91 90000 33344", rating:"4.6" },
+    { name:"Arun Prakash", vehicle:"Fuel Tanker \u2022 TN 22 CD 5590", phone:"+91 90000 55566", rating:"4.9" }
+  ],
+  mechanic: [
+    { name:"Vijay S.", vehicle:"Service Bike \u2022 TN 45 QX 8812", phone:"+91 90000 77788", rating:"4.7" },
+    { name:"Karthik R.", vehicle:"Repair Van \u2022 TN 10 EF 2234", phone:"+91 90000 99900", rating:"4.9" },
+    { name:"Manoj D.", vehicle:"Service Bike \u2022 TN 33 GH 6671", phone:"+91 90000 22233", rating:"4.5" }
+  ]
+};
+
+function pickPartner(type){
+  const pool = PARTNER_POOL[type] || PARTNER_POOL.fuel;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function deliveryKeyForMobile(mobile){
+  return mobile ? ("FixNFuelActiveDelivery:" + mobile) : "FixNFuelActiveDelivery:guest";
+}
+
+function startDelivery(booking){
+  const partner = pickPartner(booking.type);
+  const etaSeconds = (8 + Math.floor(Math.random() * 8)) * 60; // 8-15 min
+  const delivery = {
+    bookingId: booking.id,
+    type: booking.type,
+    detail: booking.detail,
+    location: booking.location,
+    partner: partner,
+    status: "Dispatched",
+    startedAt: Date.now(),
+    etaSeconds: etaSeconds,
+    totalSeconds: etaSeconds
+  };
+  localStorage.setItem(deliveryKeyForMobile(booking.customerMobile), JSON.stringify(delivery));
 }
 
 let currentFilter = "all";
@@ -787,7 +799,7 @@ function renderBookingsTable(){
       </td>
       <td>${escapeHtml(b.detail || '-')}</td>
       <td>${escapeHtml(b.location || '-')}</td>
-      <td style="max-width:220px;">${escapeHtml(b.notes || '—')}</td>
+      <td style="max-width:200px;">${escapeHtml(b.notes || '—')}</td>
       <td style="white-space:nowrap;color:#94a3b8;">${escapeHtml(b.time || '-')}</td>
       <td>
         <select class="status-select status-${b.status}" data-id="${b.id}">
@@ -796,6 +808,7 @@ function renderBookingsTable(){
           <option ${b.status === 'Completed' ? 'selected' : ''}>Completed</option>
           <option ${b.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
         </select>
+        ${b.status === 'Pending' ? '<span class="dispatch-hint">Set to Dispatched to start tracking</span>' : ''}
       </td>
       <td>
         <button class="row-delete-btn" data-id="${b.id}" title="Delete booking">
@@ -812,6 +825,21 @@ function renderBookingsTable(){
       if(target){
         target.status = sel.value;
         saveBookings(bookings);
+
+        if(sel.value === "Dispatched"){
+          const key = deliveryKeyForMobile(target.customerMobile);
+          const existing = JSON.parse(localStorage.getItem(key) || "null");
+          if(!existing || existing.bookingId !== target.id){
+            startDelivery(target);
+          }
+        } else if(sel.value === "Cancelled" || sel.value === "Completed"){
+          const key = deliveryKeyForMobile(target.customerMobile);
+          const existing = JSON.parse(localStorage.getItem(key) || "null");
+          if(existing && existing.bookingId === target.id){
+            localStorage.removeItem(key);
+          }
+        }
+
         renderAll();
       }
     });
@@ -842,7 +870,6 @@ function renderUserTable(){
     return;
   }
 
-  // newest login first
   const ordered = [...users].reverse();
 
   tbody.innerHTML = ordered.map(user => `
@@ -879,7 +906,7 @@ document.getElementById("clear-users-btn").addEventListener("click", () => {
 
 function escapeHtml(str){
   const div = document.createElement("div");
-  div.textContent = str;
+  div.textContent = str == null ? "" : str;
   return div.innerHTML;
 }
 

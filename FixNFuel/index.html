@@ -1238,6 +1238,149 @@ footer.site-footer{
   font-size:13.5px;
 }
 
+/* ---------------- PAYMENT ---------------- */
+
+.pay-summary-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  font-size:13.5px;
+}
+
+.pay-summary-row:last-of-type{
+  border-bottom:none;
+}
+
+.pay-summary-row span:first-child{
+  color:#94a3b8;
+}
+
+.pay-summary-row span:last-child{
+  color:#fff;
+  font-weight:500;
+  text-align:right;
+}
+
+.pay-total-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 0 6px;
+  margin-top:6px;
+  border-top:2px solid rgba(255,215,0,.25);
+}
+
+.pay-total-row span:first-child{
+  color:#fff;
+  font-weight:600;
+  font-size:15px;
+}
+
+.pay-total-row span:last-child{
+  color:var(--gold);
+  font-weight:700;
+  font-size:22px;
+  font-family:'Sora',sans-serif;
+}
+
+.pay-methods{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin:22px 0 26px;
+}
+
+.pay-method-card{
+  border:1.5px solid #475569;
+  background:#1e293b;
+  border-radius:12px;
+  padding:16px 10px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.pay-method-card i{
+  font-size:22px;
+  color:#94a3b8;
+  margin-bottom:8px;
+  display:block;
+  transition:.2s;
+}
+
+.pay-method-card span{
+  font-size:12.5px;
+  color:#cbd5e1;
+  font-weight:600;
+}
+
+.pay-method-card:hover{
+  border-color:rgba(255,215,0,.4);
+}
+
+.pay-method-card.selected{
+  border-color:var(--gold);
+  background:rgba(255,215,0,.08);
+}
+
+.pay-method-card.selected i,
+.pay-method-card.selected span{
+  color:var(--gold);
+}
+
+.pay-processing{
+  text-align:center;
+  padding:40px 20px;
+}
+
+.pay-spinner{
+  width:44px;
+  height:44px;
+  border:4px solid rgba(255,215,0,.2);
+  border-top-color:var(--gold);
+  border-radius:50%;
+  margin:0 auto 18px;
+  animation:spin 0.8s linear infinite;
+}
+
+@keyframes spin{
+  to{ transform:rotate(360deg); }
+}
+
+.pay-success{
+  text-align:center;
+  padding:20px 10px;
+}
+
+.pay-success i{
+  font-size:52px;
+  color:var(--success);
+  margin-bottom:16px;
+}
+
+.pay-success h3{
+  color:#fff;
+  font-size:22px;
+  margin-bottom:8px;
+}
+
+.pay-success p{
+  color:#94a3b8;
+  font-size:13.5px;
+  margin-bottom:22px;
+}
+
+.pay-receipt{
+  background:#1e293b;
+  border:1px dashed #475569;
+  border-radius:10px;
+  padding:16px 18px;
+  text-align:left;
+  margin-bottom:24px;
+}
+
 /* ---------------- CHATBOT ---------------- */
 
 .chatbot-toggle{
@@ -2117,6 +2260,11 @@ table.admin-table tr:hover td{
         </div>
 
         <div class="form-field">
+          <label for="fuel-page-liters">How many litres do you need?</label>
+          <input type="number" id="fuel-page-liters" min="1" max="100" step="0.5" value="5" required>
+        </div>
+
+        <div class="form-field">
           <label for="fuel-page-location">Your location</label>
           <input type="text" id="fuel-page-location" placeholder="e.g. NH-48, near Km 22 milestone" required>
         </div>
@@ -2179,6 +2327,16 @@ table.admin-table tr:hover td{
         <button type="submit" class="modal-submit-btn">Request Mechanic</button>
       </form>
     </div>
+  </section>
+
+  <!-- ================= PAYMENT PAGE ================= -->
+  <section class="page-section" id="page-payment">
+    <div class="page-hero">
+      <h1><i class="fas fa-credit-card" style="color:var(--gold);"></i> Payment</h1>
+      <p>Complete payment to confirm your booking. It will still need to be dispatched by our team before tracking begins.</p>
+    </div>
+
+    <div id="payment-content"></div>
   </section>
 
   <!-- ================= LIVE TRACKING PAGE ================= -->
@@ -2730,6 +2888,171 @@ function updateBookingStatusInStorage(bookingId, status){
   }
 }
 
+/* ---------------- PAYMENT ---------------- */
+
+const FUEL_PRICE_PER_LITER = { Petrol: 105, Diesel: 95 };
+
+const DELIVERY_FEE = { Car: 49, Bike: 29, Auto: 39, Lorry: 99 };
+
+const MECHANIC_SERVICE_FEE = { Car: 249, Bike: 149, Auto: 199, Lorry: 399 };
+
+function calculateFuelBreakdown(fuelType, liters, vehicleType){
+  const pricePerLiter = FUEL_PRICE_PER_LITER[fuelType] || FUEL_PRICE_PER_LITER.Petrol;
+  const deliveryFee = DELIVERY_FEE[vehicleType] || DELIVERY_FEE.Car;
+  const fuelCost = Math.round(pricePerLiter * liters);
+  const total = fuelCost + deliveryFee;
+  return {
+    total,
+    lineItems: [
+      { label: `${fuelType} \u2014 ${liters} L \u00d7 \u20b9${pricePerLiter}/L`, value: `\u20b9${fuelCost}` },
+      { label: `Delivery fee (${vehicleType})`, value: `\u20b9${deliveryFee}` }
+    ]
+  };
+}
+
+function calculateMechanicBreakdown(issue, vehicleType){
+  const fee = MECHANIC_SERVICE_FEE[vehicleType] || MECHANIC_SERVICE_FEE.Car;
+  return {
+    total: fee,
+    lineItems: [
+      { label: `Service visit \u2014 ${issue} (${vehicleType})`, value: `\u20b9${fee}` }
+    ]
+  };
+}
+
+let pendingPaymentBooking = null;
+let selectedPaymentMethod = "UPI";
+
+function updateBookingPaymentInStorage(bookingId, paymentInfo){
+  const bookings = JSON.parse(localStorage.getItem("FixNFuelBookings") || "[]");
+  const target = bookings.find(b => b.id === bookingId);
+  if(target){
+    Object.assign(target, paymentInfo);
+    localStorage.setItem("FixNFuelBookings", JSON.stringify(bookings));
+  }
+}
+
+function goToPayment(booking, breakdown){
+  pendingPaymentBooking = booking;
+  updateBookingPaymentInStorage(booking.id, {
+    paymentAmount: breakdown.total,
+    paymentBreakdown: breakdown.lineItems,
+    paymentStatus: "Unpaid"
+  });
+  pendingPaymentBooking.paymentAmount = breakdown.total;
+  pendingPaymentBooking.paymentBreakdown = breakdown.lineItems;
+  selectedPaymentMethod = "UPI";
+  goToPage("payment");
+  renderPaymentPage();
+}
+
+function renderPaymentPage(){
+  const wrap = document.getElementById("payment-content");
+  if(!wrap) return;
+
+  const booking = pendingPaymentBooking;
+  if(!booking){
+    wrap.innerHTML = `
+      <div class="card empty-state">
+        <i class="fas fa-receipt"></i>
+        <h4>No payment pending</h4>
+        <p>Book fuel or a mechanic first to reach the payment step.</p>
+        <button class="svc-btn" style="width:auto;display:inline-block;" onclick="goToPage('fuel-booking')">Book Fuel</button>
+      </div>`;
+    return;
+  }
+
+  const amount = booking.paymentAmount || 0;
+  const lineItems = booking.paymentBreakdown || [{ label: booking.detail, value: `\u20b9${amount}` }];
+  const lineItemsHtml = lineItems.map(item => `
+    <div class="pay-summary-row"><span>${escapeHtml(item.label)}</span><span>${escapeHtml(item.value)}</span></div>
+  `).join("");
+
+  wrap.innerHTML = `
+    <div class="card">
+      <h3 style="margin-bottom:16px;"><i class="fas fa-${booking.type === 'fuel' ? 'gas-pump' : 'wrench'}"></i> Order Summary</h3>
+      <div class="pay-summary-row"><span>Location</span><span>${escapeHtml(booking.location)}</span></div>
+      ${lineItemsHtml}
+      <div class="pay-total-row"><span>Amount Payable</span><span>\u20b9${amount}</span></div>
+
+      <div class="pay-methods" id="pay-methods">
+        <div class="pay-method-card selected" data-method="UPI">
+          <i class="fas fa-mobile-screen-button"></i>
+          <span>UPI</span>
+        </div>
+        <div class="pay-method-card" data-method="Card">
+          <i class="fas fa-credit-card"></i>
+          <span>Card</span>
+        </div>
+        <div class="pay-method-card" data-method="COD">
+          <i class="fas fa-money-bill-wave"></i>
+          <span>Cash</span>
+        </div>
+      </div>
+
+      <button class="modal-submit-btn" id="pay-now-btn">Pay \u20b9${amount}</button>
+    </div>`;
+
+  document.querySelectorAll("#pay-methods .pay-method-card").forEach(card => {
+    card.addEventListener("click", () => {
+      document.querySelectorAll("#pay-methods .pay-method-card").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      selectedPaymentMethod = card.dataset.method;
+      const btn = document.getElementById("pay-now-btn");
+      if(btn) btn.textContent = selectedPaymentMethod === "COD" ? `Confirm \u2014 Pay \u20b9${amount} on delivery` : `Pay \u20b9${amount}`;
+    });
+  });
+
+  document.getElementById("pay-now-btn").addEventListener("click", processPayment);
+}
+
+function processPayment(){
+  const wrap = document.getElementById("payment-content");
+  const booking = pendingPaymentBooking;
+  if(!wrap || !booking) return;
+
+  if(selectedPaymentMethod === "COD"){
+    updateBookingPaymentInStorage(booking.id, { paymentMethod: "Cash on Delivery", paymentStatus: "Pay on delivery" });
+    showPaymentSuccess(booking, "Cash on Delivery", false);
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="card pay-processing">
+      <div class="pay-spinner"></div>
+      <p style="color:#94a3b8;font-size:13.5px;">Processing your ${selectedPaymentMethod} payment\u2026</p>
+    </div>`;
+
+  setTimeout(() => {
+    updateBookingPaymentInStorage(booking.id, { paymentMethod: selectedPaymentMethod, paymentStatus: "Paid" });
+    showPaymentSuccess(booking, selectedPaymentMethod, true);
+  }, 1400);
+}
+
+function showPaymentSuccess(booking, method, alreadyPaid){
+  const wrap = document.getElementById("payment-content");
+  if(!wrap) return;
+  const amount = booking.paymentAmount || 0;
+  const lineItems = booking.paymentBreakdown || [{ label: booking.detail, value: `\u20b9${amount}` }];
+  const lineItemsHtml = lineItems.map(item => `
+    <div class="pay-summary-row"><span>${escapeHtml(item.label)}</span><span>${escapeHtml(item.value)}</span></div>
+  `).join("");
+
+  wrap.innerHTML = `
+    <div class="card pay-success">
+      <i class="fas fa-circle-check"></i>
+      <h3>${alreadyPaid ? "Payment Successful" : "Booking Confirmed"}</h3>
+      <p>${alreadyPaid ? `\u20b9${amount} paid via ${escapeHtml(method)}.` : `\u20b9${amount} to be collected in cash on delivery.`}</p>
+      <div class="pay-receipt">
+        <div class="pay-summary-row"><span>Location</span><span>${escapeHtml(booking.location)}</span></div>
+        ${lineItemsHtml}
+        <div class="pay-summary-row"><span>Payment Method</span><span>${escapeHtml(method)}</span></div>
+        <div class="pay-total-row"><span>Total Paid</span><span>\u20b9${amount}</span></div>
+      </div>
+      <button class="modal-submit-btn" onclick="pendingPaymentBooking = null; goToPage('live-tracking');">Continue to Live Tracking</button>
+    </div>`;
+}
+
 /* ---------------- LIVE TRACKING ---------------- */
 
 const PARTNER_POOL = {
@@ -2996,13 +3319,18 @@ document.getElementById("fuel-page-form").addEventListener("submit", (e) => {
   if(!location) return;
   const fuelType = document.getElementById("fuel-page-type").value;
   const vehicleType = document.getElementById("fuel-page-vehicle").value;
-  const detail = `${fuelType} \u2022 ${vehicleType}`;
+  const liters = parseFloat(document.getElementById("fuel-page-liters").value);
+  if(!liters || liters <= 0){
+    alert("Please enter how many litres you need.");
+    return;
+  }
+  const detail = `${fuelType} ${liters}L \u2022 ${vehicleType}`;
   const notes = document.getElementById("fuel-page-notes").value.trim();
   const booking = saveBooking("fuel", detail, location, notes, mobile);
-  alert(`Your request for ${fuelType} (${vehicleType}) at "${location}" has been received. You'll be able to track your partner live once our team dispatches them.`);
   e.target.reset();
+  document.getElementById("fuel-page-liters").value = "5";
   prefillBookingMobileFields();
-  goToPage("live-tracking");
+  goToPayment(booking, calculateFuelBreakdown(fuelType, liters, vehicleType));
 });
 
 document.getElementById("mechanic-page-form").addEventListener("submit", (e) => {
@@ -3019,10 +3347,9 @@ document.getElementById("mechanic-page-form").addEventListener("submit", (e) => 
   const detail = `${issue} \u2022 ${vehicleType}`;
   const notes = document.getElementById("mechanic-page-notes").value.trim();
   const booking = saveBooking("mechanic", detail, location, notes, mobile);
-  alert(`Your mechanic request for your ${vehicleType.toLowerCase()} (${issue}) at "${location}" has been received. You'll be able to track your partner live once our team dispatches them.`);
   e.target.reset();
   prefillBookingMobileFields();
-  goToPage("live-tracking");
+  goToPayment(booking, calculateMechanicBreakdown(issue, vehicleType));
 });
 
 function prefillBookingMobileFields(){
